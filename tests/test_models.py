@@ -101,6 +101,64 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(new_product.available, product.available)
         self.assertEqual(new_product.category, product.category)
 
-    #
-    # ADD YOUR TEST CASES HERE
-    #
+        def test_read_a_product(self):
+        """It should Read a Product from the database"""
+        product = ProductFactory()
+        product.create()
+        found = Product.find(product.id)
+        self.assertIsNotNone(found)
+        self.assertEqual(found.id, product.id)
+        self.assertEqual(found.name, product.name)
+
+    def test_update_a_product(self):
+        """It should Update a Product in the database"""
+        product = ProductFactory()
+        product.create()
+        product.description = "Updated description"
+        original_id = product.id
+        product.update()
+        updated = Product.find(original_id)
+        self.assertEqual(updated.description, "Updated description")
+
+    def test_delete_a_product(self):
+        """It should Delete a Product from the database"""
+        product = ProductFactory()
+        product.create()
+        self.assertIsNotNone(Product.find(product.id))
+        product.delete()
+        self.assertIsNone(Product.find(product.id))
+
+    def test_list_all_products(self):
+        """It should List all Products in the database"""
+        products = Product.all()
+        self.assertEqual(products, [])
+        for _ in range(5):
+            product = ProductFactory()
+            product.create()
+        all_products = Product.all()
+        self.assertEqual(len(all_products), 5)
+
+    def test_find_by_name(self):
+        """It should Find Products by Name"""
+        product = ProductFactory(name="Sneakers")
+        product.create()
+        results = Product.find_by_name("Sneakers")
+        self.assertGreater(len(results), 0)
+        self.assertEqual(results[0].name, "Sneakers")
+
+    def test_find_by_category(self):
+        """It should Find Products by Category"""
+        product = ProductFactory(category=Category.SPORTS)
+        product.create()
+        results = Product.find_by_category(Category.SPORTS)
+        self.assertGreater(len(results), 0)
+        self.assertEqual(results[0].category, Category.SPORTS)
+
+    def test_find_by_availability(self):
+        """It should Find Products by Availability"""
+        product = ProductFactory(available=True)
+        product.create()
+        results = Product.find_by_availability(True)
+        self.assertGreater(len(results), 0)
+        self.assertTrue(results[0].available)
+
