@@ -11,6 +11,8 @@ DRIVER = getenv('DRIVER', 'firefox').lower()
 
 def before_all(context):
     """ Executed once before all tests """
+    context.wait_seconds = 10
+
     context.base_url = BASE_URL
     context.wait_seconds = WAIT_SECONDS
     # Select either Chrome or Firefox
@@ -43,4 +45,7 @@ def get_firefox():
     options = webdriver.FirefoxOptions()
     options.add_argument("--headless")
     return webdriver.Firefox(options=options)    
+
+
+
     
